@@ -17,15 +17,18 @@ using our own poopsploit / P2JB builds.
 | **POOPS-DEV** | `PS5-POOPS-DEV` | 7.00–12.00 | poopsploit (devkit) — ✅ HW-jailbroke 12.00 |
 | **P2JB-DEV** | `PS5-P2JB-DEV` | 12.00–12.70 | P2JB (devkit, launcher v=204) |
 
-Prebuilt merged images are under `images/<NAME>/<NAME>-merged.bin` (flash at `0x0`).
+Prebuilt merged images (flash at `0x0`) live in **[Releases](https://github.com/soniciso1/ESP32-S3-Hosts/releases/latest)**, not the repo tree — `<NAME>-merged.bin`, one per image.
 
 ## Flash
 
 ```powershell
 cd images\P2JB
-.\flash.ps1                 # auto-detects the USB Serial COM port
+.\flash.ps1                 # downloads the .bin from Releases if missing, auto-detects COM
 .\flash.ps1 -Port COM17
 ```
+
+`flash.ps1` pulls its `<NAME>-merged.bin` from the latest release automatically, or grab it
+manually from the [Releases page](https://github.com/soniciso1/ESP32-S3-Hosts/releases/latest).
 
 After flashing, **power-cycle the board** (unplug/replug) — a native USB-JTAG reset can
 leave the S3 in download mode; a physical power cycle boots the app. Then join the SSID
@@ -59,8 +62,10 @@ firmware/           ESP-IDF v5.5 project (source)
   build-*.py        site-tree assemblers  ·  build-images.ps1  per-SSID image builder
   partitions_s3_16m.csv, sdkconfig.defaults*
 sites/              the four assembled LittleFS site trees (source of each storage image)
-images/             the four prebuilt merged bins + parts/ + flash.ps1 + per-image README
+images/             per-image flash.ps1 + README (the .bin comes from Releases)
 ```
+
+Binaries (`*.bin`) are published as **Release assets**, never committed to the tree.
 
 ## Building from source
 

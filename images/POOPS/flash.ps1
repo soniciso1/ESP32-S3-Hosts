@@ -4,6 +4,12 @@
 #   .\flash.ps1                 # auto-detect the USB Serial COM port
 #   .\flash.ps1 -Port COM17
 param([string]$Port)
+# Prebuilt image lives in GitHub Releases, not the repo. Fetch it if missing.
+$img = Join-Path $PSScriptRoot "POOPS-merged.bin"
+if (-not (Test-Path $img)) {
+    Write-Host "downloading POOPS-merged.bin from Releases ..." -ForegroundColor Cyan
+    Invoke-WebRequest -Uri "https://github.com/soniciso1/ESP32-S3-Hosts/releases/download/v1.0/POOPS-merged.bin" -OutFile $img
+}
 $env:IDF_PATH='E:\esp-idf'; $env:IDF_TOOLS_PATH='E:\esp-idf-tools'
 & 'E:\esp-idf\export.ps1' *>&1 | Out-Null
 if (-not $Port) {

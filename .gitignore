@@ -10,3 +10,7 @@ sdkconfig.old
 *.out
 *.bak
 *.orig
+
+# prebuilt images live in GitHub Releases, not the tree
+*.bin
+images/**/parts/

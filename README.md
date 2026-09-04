@@ -8,7 +8,7 @@ Modeled on the serving strategy from
 [owendswang/ps5-webkit-autoloader-esp32](https://github.com/owendswang/ps5-webkit-autoloader-esp32),
 using our own poopsploit / P2JB builds.
 
-## The four images
+## The images
 
 | Image | SSID | Firmware | Chain |
 |---|---|---|---|
@@ -16,6 +16,9 @@ using our own poopsploit / P2JB builds.
 | **P2JB** | `PS5-P2JB` | 12.00–12.70 | P2JB (Y2JB WebKit port) — ✅ HW-jailbroke retail 12.00 |
 | **POOPS-DEV** | `PS5-POOPS-DEV` | 7.00–12.00 | poopsploit (devkit) — ✅ HW-jailbroke 12.00 |
 | **P2JB-DEV** | `PS5-P2JB-DEV` | 12.00–12.70 | P2JB (devkit, launcher v=204) |
+| **POOPS-4M** | `PS5-POOPS-4M` | 7.00–12.00 | poopsploit on a **4 MB ESP32 (no PSRAM)** — ✅ HW-jailbroke 12.00; **trimmed payload set** (see below) |
+
+**POOPS-4M is the odd one out:** it targets a plain **4 MB ESP32 (WROOM, no PSRAM)**, not the S3. Flash is tight, so the payload menu is **cut down to only what fits** — `ftpsrv`, `gdbsrv`, `klogsrv`, `shsrv`. The big payloads (**etaHEN, kstuff, shadowmountplus, websrv, pldmgr, autoloader**) are **not included** and their menu tabs are removed; use a 16 MB board (POOPS) for the full set, or push them post-JB over FTP. Its TLS handshake is timing-sensitive and currently paced via verbose mbedTLS logging (harmless UART output) — details in `images/POOPS-4M/README.md`.
 
 Prebuilt merged images (flash at `0x0`) live in **[Releases](https://github.com/soniciso1/ESP32-S3-Hosts/releases/latest)**, not the repo tree — `<NAME>-merged.bin`, one per image.
 
@@ -61,7 +64,7 @@ firmware/           ESP-IDF v5.5 project (source)
   index-src/        firmware-detect landing pages (per image)
   build-*.py        site-tree assemblers  ·  build-images.ps1  per-SSID image builder
   partitions_s3_16m.csv, sdkconfig.defaults*
-sites/              the four assembled LittleFS site trees (source of each storage image)
+sites/              the assembled LittleFS site trees (source of each storage image)
 images/             per-image flash.ps1 + README (the .bin comes from Releases)
 ```
 

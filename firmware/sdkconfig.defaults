@@ -1,0 +1,24 @@
+# Shared defaults. Board-specific PSRAM/flash come from sdkconfig.defaults.<target>.
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions_s3_16m.csv"
+
+# HTTPS server + mbedTLS. The console does a full TLS handshake; give it room.
+CONFIG_ESP_HTTPS_SERVER_ENABLE=y
+CONFIG_MBEDTLS_DYNAMIC_BUFFER=y
+CONFIG_MBEDTLS_SSL_MAX_CONTENT_LEN=8192
+
+# SoftAP + DHCP server DNS option must be available.
+CONFIG_LWIP_DHCPS=y
+CONFIG_LWIP_DHCPS_MAX_STATION_NUM=8
+
+# Bump HTTPD so wildcard matching + chunked streaming behave.
+CONFIG_HTTPD_MAX_REQ_HDR_LEN=1024
+CONFIG_HTTPD_MAX_URI_LEN=512
+
+# Sockets: HTTPS(7) + HTTP(3) + captive DNS(1) + DHCP server + a little slack. Default
+# LWIP_MAX_SOCKETS (10) is too low for a page that pulls 20+ assets over keep-alive.
+CONFIG_LWIP_MAX_SOCKETS=24
+# Keep WiFi RX/TX and lwIP buffers in internal DMA-capable RAM, never PSRAM - the AP
+# associates but silently drops all data frames if these land in PSRAM.
+CONFIG_SPIRAM_TRY_ALLOCATE_WIFI_LWIP=n

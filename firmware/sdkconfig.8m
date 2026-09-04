@@ -1,0 +1,8 @@
+# ESP32-S3 board #4: 8 MB flash, 2 MB EMBEDDED QUAD PSRAM (not octal).
+# The shared esp32s3 defaults select octal PSRAM, which is correct for board #3's 8 MB
+# octal chip but boot-loops board #4 ("octal_psram: PSRAM chip is not connected, or
+# wrong PSRAM line mode"). Override to quad here.
+CONFIG_ESPTOOLPY_FLASHSIZE_8MB=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions_s3_8m.csv"
+CONFIG_SPIRAM_MODE_QUAD=y
+CONFIG_SPIRAM_SPEED_80M=y

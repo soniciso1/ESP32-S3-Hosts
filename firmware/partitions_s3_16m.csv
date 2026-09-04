@@ -1,0 +1,8 @@
+# ESP32-S3 16 MB. Measured app binary is ~0.9-1 MB; 1.5 MB leaves comfortable headroom
+# for growth without starving the site partition (the unified poopsploit+p2jb+umtx2
+# tree runs close to the old 12.94 MB storage cap once LittleFS metadata is counted).
+# Name,   Type, SubType, Offset,   Size
+nvs,      data, nvs,     0x9000,   0x6000
+phy_init, data, phy,     0xf000,   0x1000
+factory,  app,  factory, 0x10000,  0x180000
+storage,  data, spiffs,  0x190000, 0xE70000

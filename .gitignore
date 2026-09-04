@@ -1,0 +1,12 @@
+# never commit the private TLS key (regenerate with firmware/main/certs/gen-cert.sh)
+server.key
+*.pem
+# ESP-IDF build artifacts (regenerable)
+build_*/
+firmware/build*/
+managed_components/
+sdkconfig
+sdkconfig.old
+*.out
+*.bak
+*.orig

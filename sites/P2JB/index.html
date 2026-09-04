@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<!--
+  P2JB-only firmware-detect landing for the offline manuals PoC (single-site image).
+
+  One image, one AP, one console. Detects the console firmware from its own
+  User-Agent (the header every PS5 WebKit page sends) and routes to P2JB's own
+  Jailbreak page for 12.00-12.70. No autoloading: the operator clicks Jailbreak,
+  and P2JB's own payload MENU (not an autoloader) offers the ELFs in payloads/.
+  Routing shape adapted from owendswang/ps5-webkit-autoloader-esp32 app.js; the
+  destination is our own P2JB build.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PS5 Jailbreak</title>
+<style>
+  :root { color-scheme: dark; }
+  body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
+         background:#0b0b0f; color:#eee; font:16px/1.4 -apple-system,system-ui,sans-serif; }
+  main { max-width:32rem; padding:2rem; text-align:center; }
+  h1 { font-size:1.4rem; margin:0 0 .5rem; }
+  p.sub { color:#9aa; margin:0 0 1.5rem; font-size:.9rem; }
+  .btn { display:inline-block; margin:.4rem; padding:.9rem 2rem; border-radius:.6rem;
+         background:#2a5adf; color:#fff; text-decoration:none; font-weight:600;
+         font-size:1.1rem; }
+  .btn.secondary { background:#333; }
+  .fw { color:#8f8; font-family:monospace; }
+  .unknown { color:#f88; margin-top:1rem; font-size:.85rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>PS5 Jailbreak</h1>
+  <p class="sub">Detected firmware: <span class="fw" id="fw">detecting&hellip;</span></p>
+  <div id="pick"></div>
+  <div class="unknown" id="unknown" hidden>
+    Firmware not auto-detected or outside 12.00-12.70. Launch manually:<br>
+    <a class="btn secondary" href="p2jb/p2jb.html?go=1&amp;auto=1&amp;trigger=netcontrol&amp;payload=1&amp;v=195">P2JB (12.00-12.70)</a>
+  </div>
+</main>
+<script>
+(function () {
+  // P2JB engine range: 12.00-12.70. This image serves ONLY P2JB, so every covered
+  // firmware routes here; anything else falls back to the manual P2JB button.
+  var P2JB_FW = ["12.00","12.02","12.20","12.40","12.60","12.70"];
+
+  // EXACT params from the production launcher (sites-live/p2jb/index.html) - the string
+  // proven to jailbreak. Match production so behaviour is identical.
+  var P2JB_HREF = "p2jb/p2jb.html?go=1&auto=1&trigger=netcontrol&payload=1&v=195";
+
+  var m = /PlayStation 5\/(\d+\.\d+)/.exec(navigator.userAgent);
+  var fw = m ? m[1] : "";
+  document.getElementById("fw").textContent = fw || "not detected";
+
+  if (P2JB_FW.indexOf(fw) !== -1) {
+    var a = document.createElement("a");
+    a.className = "btn"; a.id = "run-jb"; a.href = P2JB_HREF; a.textContent = "Jailbreak (P2JB)";
+    document.getElementById("pick").appendChild(a);
+    try { a.focus(); } catch (e) {}
+  } else {
+    document.getElementById("unknown").hidden = false;
+  }
+})();
+</script>
+</body>
+</html>

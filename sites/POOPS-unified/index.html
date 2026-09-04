@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<!--
+  Unified firmware-detect landing page for the offline manuals PoC.
+
+  One image, one AP, one console: detects the console's firmware from its own
+  User-Agent header (the same header every PS5 WebKit page sends) and routes straight
+  to the matching exploit chain's own Jailbreak page - poopsploit for 7.00-12.00, P2JB
+  for 12.02-12.70, umtx2 for 1.00-5.50. No autoloading of anything: the operator still
+  clicks Jailbreak, and after that the exploit's own payload MENU (not an autoloader)
+  offers the ELFs in payloads/. Routing table adapted from the proven
+  owendswang/ps5-webkit-autoloader-esp32 app.js; the destinations are our own builds.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PS5 Jailbreak</title>
+<style>
+  :root { color-scheme: dark; }
+  body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
+         background:#0b0b0f; color:#eee; font:16px/1.4 -apple-system,system-ui,sans-serif; }
+  main { max-width:32rem; padding:2rem; text-align:center; }
+  h1 { font-size:1.4rem; margin:0 0 .5rem; }
+  p.sub { color:#9aa; margin:0 0 1.5rem; font-size:.9rem; }
+  .btn { display:inline-block; margin:.4rem; padding:.9rem 2rem; border-radius:.6rem;
+         background:#2a5adf; color:#fff; text-decoration:none; font-weight:600;
+         font-size:1.1rem; }
+  .btn.secondary { background:#333; }
+  .fw { color:#8f8; font-family:monospace; }
+  .unknown { color:#f88; margin-top:1rem; font-size:.85rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>PS5 Jailbreak</h1>
+  <p class="sub">Detected firmware: <span class="fw" id="fw">detecting&hellip;</span></p>
+  <div id="pick"></div>
+  <div class="unknown" id="unknown" hidden>
+    Firmware not auto-detected or not covered by this build. Pick manually:<br>
+    <a class="btn secondary" href="poopsploit/poops.html">Poopsploit (7.00-12.00)</a>
+    <a class="btn secondary" href="p2jb/p2jb.html">P2JB (12.02-12.70)</a>
+    <a class="btn secondary" href="umtx2/index.html">umtx2 (1.00-5.50)</a>
+  </div>
+</main>
+<script>
+(function () {
+  // Same firmware ranges the routing is proven against (owendswang/app.js), covering
+  // every build id currently in our offsets/ directories.
+  var UMTX2_FW = ["1.00","1.01","1.02","1.05","1.10","1.11","1.12","1.13","1.14",
+                   "2.00","2.20","2.25","2.26","2.30","2.50","2.70",
+                   "3.00","3.10","3.20","3.21","4.00","4.02","4.03","4.50","4.51",
+                   "5.00","5.02","5.10","5.50"];
+  var POOPS_FW  = ["7.00","7.01","7.20","7.40","7.60","7.61","8.00","8.20","8.40","8.60",
+                    "9.00","9.05","9.20","9.40","9.60",
+                    "10.00","10.01","10.20","10.40","10.60",
+                    "11.00","11.20","11.40","11.60","12.00"];
+  var P2JB_FW   = ["12.02","12.20","12.40","12.60","12.70"];
+
+  // EXACT params from the production launchers (sites-live/*/index.html) - proven to
+  // jailbreak the 12.00 via the host. Incomplete params here were a red herring earlier;
+  // match production exactly so behaviour is identical.
+  var POOPS_HREF = "poopsploit/poops.html?go=1&auto=1&production=1&trigger=netcontrol&attempts=8&only=ps0_preflight,ps1_prepare,ps3_stage0,ps4_validate,ps5_stage1,ps6_stage2,ps8_stage3,ps9_stage4,ps10_stage5&log=debug&payload=1&v=lowfw17";
+  var P2JB_HREF  = "p2jb/p2jb.html?go=1&auto=1&trigger=netcontrol&payload=1&v=195";
+  var UMTX2_HREF = "umtx2/index.html";
+
+  var m = /PlayStation 5\/(\d+\.\d+)/.exec(navigator.userAgent);
+  var fw = m ? m[1] : "";
+  document.getElementById("fw").textContent = fw || "not detected";
+
+  var href = null, label = null;
+  if (POOPS_FW.indexOf(fw) !== -1)      { href = POOPS_HREF; label = "Jailbreak (Poopsploit)"; }
+  else if (P2JB_FW.indexOf(fw) !== -1)  { href = P2JB_HREF;  label = "Jailbreak (P2JB)"; }
+  else if (UMTX2_FW.indexOf(fw) !== -1) { href = UMTX2_HREF; label = "Jailbreak (umtx2)"; }
+
+  if (href) {
+    var a = document.createElement("a");
+    a.className = "btn"; a.id = "run-jb"; a.href = href; a.textContent = label;
+    document.getElementById("pick").appendChild(a);
+    try { a.focus(); } catch (e) {}
+  } else {
+    document.getElementById("unknown").hidden = false;
+  }
+})();
+</script>
+</body>
+</html>

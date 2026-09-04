@@ -1,0 +1,20 @@
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_OCT=y
+# Let mbedTLS and the HTTP server allocate from PSRAM so the ~320KB internal DRAM
+# stays free for Wi-Fi and lwIP.
+CONFIG_SPIRAM_USE_MALLOC=y
+CONFIG_SPIRAM_MALLOC_ALWAYSINTERNAL=16384
+CONFIG_MBEDTLS_EXTERNAL_MEM_ALLOC=y
+
+# 80MHz octal PSRAM is a documented source of WiFi timing interference on ESP32-S3
+# under memory pressure (the CPU/bus contention it causes can starve time-critical
+# WiFi operations, including the DHCP server's response window). Association can
+# still succeed (it doesn't need PSRAM) while DHCP silently fails - matching what was
+# observed: client joins the AP, never gets a lease. 40MHz is the standard mitigation.
+CONFIG_SPIRAM_SPEED_40M=y
+
+# Run the S3 at its full 240 MHz (default is 160). The RSA-2048 TLS handshake for the
+# manuals redirect is MPI-heavy and is the main "click Manuals -> short wait"; 240 MHz
+# cuts it (and all file serving) by roughly a third. HW crypto (AES/MPI/SHA) is already
+# on, so the handshake already uses the accelerator - this speeds the surrounding work.
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<!--
+  POOPSPLOIT-DEV firmware-detect landing (single-site devkit image).
+  Detects the console firmware from its User-Agent and routes 7.00-12.00 to the
+  poopsploit (dev) Jailbreak page. No autoloading: operator clicks Jailbreak, then
+  poopsploit's own payload MENU offers the ELFs in payloads/.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PS5 Jailbreak (poopsploit dev)</title>
+<style>
+  :root { color-scheme: dark; }
+  body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
+         background:#0b0b0f; color:#eee; font:16px/1.4 -apple-system,system-ui,sans-serif; }
+  main { max-width:32rem; padding:2rem; text-align:center; }
+  h1 { font-size:1.4rem; margin:0 0 .5rem; }
+  p.sub { color:#9aa; margin:0 0 1.5rem; font-size:.9rem; }
+  .btn { display:inline-block; margin:.4rem; padding:.9rem 2rem; border-radius:.6rem;
+         background:#2a5adf; color:#fff; text-decoration:none; font-weight:600; font-size:1.1rem; }
+  .btn.secondary { background:#333; }
+  .fw { color:#8f8; font-family:monospace; }
+  .unknown { color:#f88; margin-top:1rem; font-size:.85rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>PS5 Jailbreak <small style="color:#ffcf7a;font-size:.7em">(poopsploit dev)</small></h1>
+  <p class="sub">Detected firmware: <span class="fw" id="fw">detecting&hellip;</span></p>
+  <div id="pick"></div>
+  <div class="unknown" id="unknown" hidden>
+    Firmware not auto-detected or outside 7.00-12.00. Launch manually:<br>
+    <a class="btn secondary" href="poopsploit/poops.html?go=1&amp;auto=1&amp;production=1&amp;trigger=netcontrol&amp;attempts=8&amp;only=ps0_preflight,ps1_prepare,ps3_stage0,ps4_validate,ps5_stage1,ps6_stage2,ps8_stage3,ps9_stage4,ps10_stage5&amp;log=debug&amp;payload=1&amp;v=lowfw17">Poopsploit (7.00-12.00)</a>
+  </div>
+</main>
+<script>
+(function () {
+  var POOPS_FW = ["7.00","7.01","7.20","7.40","7.60","7.61","8.00","8.20","8.40","8.60",
+                   "9.00","9.05","9.20","9.40","9.60",
+                   "10.00","10.01","10.20","10.40","10.60",
+                   "11.00","11.20","11.40","11.60","12.00"];
+  // EXACT params from poopsploit-dev/index.html (proven launcher, v=lowfw17).
+  var POOPS_HREF = "poopsploit/poops.html?go=1&auto=1&production=1&trigger=netcontrol&attempts=8&only=ps0_preflight,ps1_prepare,ps3_stage0,ps4_validate,ps5_stage1,ps6_stage2,ps8_stage3,ps9_stage4,ps10_stage5&log=debug&payload=1&v=lowfw17";
+  var m = /PlayStation 5\/(\d+\.\d+)/.exec(navigator.userAgent);
+  var fw = m ? m[1] : "";
+  document.getElementById("fw").textContent = fw || "not detected";
+  if (POOPS_FW.indexOf(fw) !== -1) {
+    var a = document.createElement("a");
+    a.className = "btn"; a.id = "run-jb"; a.href = POOPS_HREF; a.textContent = "Jailbreak (Poopsploit dev)";
+    document.getElementById("pick").appendChild(a);
+    try { a.focus(); } catch (e) {}
+  } else {
+    document.getElementById("unknown").hidden = false;
+  }
+})();
+</script>
+</body>
+</html>
